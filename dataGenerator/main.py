@@ -17,7 +17,7 @@ import ast
 import math
 
 from skimage.measure import label
-from .data_augmentation import random_crop
+from .data_augmentation import random_crop, random_rotation
 
 
 class DataGenerator(keras.utils.Sequence):
@@ -116,6 +116,8 @@ class DataGenerator(keras.utils.Sequence):
 
         img = random_crop(img, self.inputDim, self.cropOffset)
 
+        if self.random_rotation:
+            img = random_rotation(img)
         X[0] = img / 255
         return X
 
