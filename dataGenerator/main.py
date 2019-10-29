@@ -60,6 +60,7 @@ class DataGenerator(keras.utils.Sequence):
         self.n_labels = len(self.labelsNames)
         self.allData = []
 
+        self.dataPerLabel = []
         for i, labelName in enumerate(self.labelsNames):
 
             location = os.path.join(locationImages, labelName)
@@ -67,16 +68,18 @@ class DataGenerator(keras.utils.Sequence):
                 allNames = os.listdir(location)[:-100]
             else:
                 allNames = os.listdir(location)[-100:]
-            for image in allNames:
-                self.allData.append([
-                    os.path.join(location, image), i
-                ])
+            self.dataPerLabel.append(
+                [
+                    os.path.join(location, image) for image in allNames
+                ]
+            )
 
         self.on_epoch_end()
 
     def __len__(self): 
         'Denotes the number of batches per epoch'
-        return int(np.floor(((len(self.allData)*self.patch_per_img) / self.batch_size)))
+        allLenghts = [len(i) for i in self.dataPerLabel]
+        return int(np.floor(((np.min(allLenghts)*self.n_labels*self.patch_per_img) / self.batch_size)))
         
     def generate(self):
         """             
@@ -111,13 +114,14 @@ class DataGenerator(keras.utils.Sequence):
 
     def __get_batch(self, index):
         X = np.empty((self.batch_size, *self.inputDim, self.n_channels))
-        y = np.empty((self.batch_size, 1, 1, self.n_labels), dtype=int)
+        y = np.empty((self.batch_size, self.n_labels), dtype=int)
 
-        start_number = self.batch_size * index
         for b in range(self.batch_size):
-            location, label = self.allData[start_number + b]
-            X[b] = self.get_patch(location)
-            y[b] = keras.utils.to_categorical(label, self.n_labels)
+            randomLabel = random.randint(0, self.n_labels-1)
+            numberLabels = len(self.dataPerLabel[randomLabel])
+            label = random.randint(0, numberLabels-1)
+            X[b] = self.get_patch(self.dataPerLabel[randomLabel][label])
+            y[b] = keras.utils.to_categorical(randomLabel, self.n_labels)
 
         return X, y
 
