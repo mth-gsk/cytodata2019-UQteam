@@ -17,6 +17,7 @@ import ast
 import math
 
 from skimage.measure import label
+from .data_augmentation import random_crop
 
 class DataGenerator(keras.utils.Sequence):
     'Generates data for Keras'
@@ -26,6 +27,7 @@ class DataGenerator(keras.utils.Sequence):
                  inputDim=(201,201),
                  n_channels = 2,
                  patch_per_img=1,
+                 cropOffset=0,
                  random_rotation=False,
                  flip=False,
                  shuffle=True,
@@ -38,6 +40,7 @@ class DataGenerator(keras.utils.Sequence):
         self.batch_size = batch_size
         self.n_channels = n_channels
         self.patch_per_img = patch_per_img
+        self.cropOffset = cropOffset
         self.random_rotation = random_rotation
         self.flip = flip
         self.shuffle = shuffle
@@ -96,18 +99,7 @@ class DataGenerator(keras.utils.Sequence):
         # Get input
         img = cv2.imread(imgLocation)[:, :, :2]
         
-        
-        # # Get random crop
-        # crop_random, label_random = self.random_crop(img, fullLabel, self.inputDim, self.outputDim)
-        
-        # # Rotate the random patch
-        # if self.random_rotation:
-        #     angle = self.random.choice([0, 90, 180, 270])
-        #     crop_random, label_random = self.rotate_patch(crop_random, label_random, angle)
- 
-        # # Flip the random patch
-        # if self.flip and self.random.choice([False, True]):
-        #     crop_random, label_random = self.flip_patch(crop_random, label_random)
+        img = random_crop(img, self.inputDim, self.cropOffset)
 
         X[0] = img/255
         return X
