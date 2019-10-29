@@ -5,8 +5,6 @@ from random import choice
 
 def random_rotation(patch):
         'Rotate a patch and its label with a random multiple of 90 degrees'
-        if not isinstance(patch, np.ndarray) or not isinstance(label, np.ndarray):
-            raise TypeError("Input type should be np.array")
             
         angle = choice([0, 90, 180, 270])
         # Rotate patch  

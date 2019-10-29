@@ -3,6 +3,7 @@ import os
 import cv2
 import keras
 import numpy as np
+from .data_augmentation import random_crop, random_rotation
 
 
 class TestDataGenerator(keras.utils.Sequence):
@@ -49,6 +50,8 @@ class TestDataGenerator(keras.utils.Sequence):
 
         # Get input
         img = cv2.imread(imgLocation)[:, :, :self.n_channels]
+
+        img = random_crop(img, self.inputDim, self.cropOffset)
 
         X[0] = img / 255
         return X

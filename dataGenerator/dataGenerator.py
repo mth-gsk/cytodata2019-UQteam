@@ -32,11 +32,11 @@ class DataGenerator(keras.utils.Sequence):
         patch_per_img=1,
         cropOffset=0,
         isTrainingData: bool = True,
-        random_rotation=False,
+        random_rotation=True,
         flip=False,
         shuffle=True,
         border_class=False,
-        illumination_correction=False,
+        normalize_data=False,
     ):
 
         # storing imported parameters
@@ -48,7 +48,7 @@ class DataGenerator(keras.utils.Sequence):
         self.random_rotation = random_rotation
         self.flip = flip
         self.shuffle = shuffle
-        self.illumination_correction = illumination_correction
+        self.normalize_data = normalize_data
 
         # Setting up connection with LabelBox
         self.labels = []  # will be set later
@@ -118,7 +118,11 @@ class DataGenerator(keras.utils.Sequence):
 
         if self.random_rotation:
             img = random_rotation(img)
-        X[0] = img / 255
+        
+        if self.normalize_data:
+            X[0] = img / np.max(img)
+        else:
+            X[0] = img / 255
         return X
 
     def __get_batch(self, index):
