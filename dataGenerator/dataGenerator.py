@@ -112,7 +112,7 @@ class DataGenerator(keras.utils.Sequence):
         X = np.empty((1, *self.inputDim, self.n_channels))
 
         # Get input
-        img = cv2.imread(imgLocation)[:, :, :2]
+        img = cv2.imread(imgLocation)[:, :, :self.n_channels]
 
         img = random_crop(img, self.inputDim, self.cropOffset)
 

@@ -48,7 +48,7 @@ class TestDataGenerator(keras.utils.Sequence):
         X = np.empty((1, *self.inputDim, self.n_channels))
 
         # Get input
-        img = cv2.imread(imgLocation)[:, :, :2]
+        img = cv2.imread(imgLocation)[:, :, :self.n_channels]
 
         X[0] = img / 255
         return X
