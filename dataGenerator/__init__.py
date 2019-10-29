@@ -1,1 +1,2 @@
-from .main import DataGenerator
+from .dataGenerator import DataGenerator
+from .testDataGenerator import TestDataGenerator
