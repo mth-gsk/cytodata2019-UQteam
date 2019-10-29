@@ -1,7 +1,8 @@
 #%%
 from dataGenerator import DataGenerator
+from personal_data import location_data
 
-dataGenerator = DataGenerator(r"C:\Users\tomni\Pictures\hackaton2019\training",
+dataGenerator = DataGenerator(location_data,
 batch_size=128)
 
 k = dataGenerator.generate()

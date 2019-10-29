@@ -113,3 +113,4 @@ venv.bak/
 *.png 
 *.jpg
 *.jpeg
+personal_data.py
