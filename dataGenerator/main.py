@@ -28,6 +28,7 @@ class DataGenerator(keras.utils.Sequence):
                  n_channels = 2,
                  patch_per_img=1,
                  cropOffset=0,
+                 isTrainingData: bool = True,
                  random_rotation=False,
                  flip=False,
                  shuffle=True,
@@ -62,7 +63,11 @@ class DataGenerator(keras.utils.Sequence):
         for i, labelName in enumerate(self.labelsNames):
 
             location = os.path.join(locationImages, labelName)
-            for image in os.listdir(location):
+            if isTrainingData:
+                allNames = os.listdir(location)[:-100]
+            else:
+                allNames = os.listdir(location)[-100:]
+            for image in allNames:
                 self.allData.append([
                     os.path.join(location, image), i
                 ])
