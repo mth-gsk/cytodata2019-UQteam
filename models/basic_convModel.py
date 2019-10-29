@@ -37,33 +37,44 @@ def Conv_DW(filters, *args, **kwargs):
     no_bias_kwargs.update(kwargs)
     return compose(
         DarknetConv2D(
-            filters=filters // 4, kernel_size=(3, 3), *args, **no_bias_kwargs
+            filters=filters, kernel_size=(3, 3), *args, **no_bias_kwargs
         ),
-        DarknetConv2D(filters=filters, kernel_size=(1, 1), *args, **no_bias_kwargs),
+        # DarknetConv2D(filters=filters, kernel_size=(1, 1), *args, **no_bias_kwargs),
         BatchNormalization(),
         LeakyReLU(alpha=0.1),
     )
 
 
-def simple_model(num_classes, input_dim=(None, None)):
+def simple_model(num_classes, input_dim=(None, None), paddingType="valid"):
     """Create Tiny YOLO_v3 model CNN body in keras."""
     if len(input_dim) == 2:
         input_dim = (*input_dim, 2)
     inputs = Input(input_dim)
     x1 = compose(
-        Conv_DW(14),
-        MaxPooling2D(pool_size=(2, 2), strides=(2, 2), padding="same"),
         Conv_DW(16),
-        MaxPooling2D(pool_size=(2, 2), strides=(2, 2), padding="same"),
-        Conv_DW(20),
-        MaxPooling2D(pool_size=(2, 2), strides=(2, 2), padding="same"),
+        Conv_DW(16),
+        MaxPooling2D(pool_size=(2, 2), strides=(2, 2), padding=paddingType),
+
         Conv_DW(32),
-        MaxPooling2D(pool_size=(2, 2), strides=(2, 2), padding="same"),
-        Conv_DW(48),
-        MaxPooling2D(pool_size=(2, 2), strides=(2, 2), padding="same"),
+        Conv_DW(32),
+        MaxPooling2D(pool_size=(2, 2), strides=(2, 2), padding=paddingType),
+
         Conv_DW(64),
-        MaxPooling2D(pool_size=(2, 2), strides=(2, 2), padding="same"),
+        Conv_DW(64),
+        MaxPooling2D(pool_size=(2, 2), strides=(2, 2), padding=paddingType),
+
+        Conv_DW(86),
+        Conv_DW(86),
+        MaxPooling2D(pool_size=(2, 2), strides=(2, 2), padding=paddingType),
+
         Conv_DW(128),
+        Conv_DW(128),
+        MaxPooling2D(pool_size=(2, 2), strides=(2, 2), padding=paddingType),
+
+        Conv_DW(128),
+        Conv_DW(128),
+        MaxPooling2D(pool_size=(2, 2), strides=(2, 2), padding=paddingType),
+        
         Flatten()
     )(inputs)
 

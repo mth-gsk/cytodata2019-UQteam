@@ -12,10 +12,3 @@ batch_size=128)
 k = dataGenerator.generate()
 
 batch = next(k)
-
-# total = np.sum(batch[1], axis=0)[0, 0]
-
-# for i in range(100):
-#     batch = next(k)
-
-#     total += np.sum(batch[1], axis=0)[0, 0]
