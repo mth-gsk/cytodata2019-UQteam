@@ -4,19 +4,20 @@ Created on Thu Jan 31 13:57:43 2019
 
 @author: Tom Nijhof
 """
-#%%
-import cv2
-import numpy as np
-import keras
-import os
-import json
-import urllib.request
-from keras import backend as K
-import random
 import ast
+import json
 import math
+import os
+import random
+import urllib.request
 
+# %%
+import cv2
+import keras
+import numpy as np
+from keras import backend as K
 from skimage.measure import label
+
 from .data_augmentation import random_crop, random_rotation
 
 
@@ -36,7 +37,7 @@ class DataGenerator(keras.utils.Sequence):
         flip=False,
         shuffle=True,
         border_class=False,
-        normalize_data=False,
+        normalize_data=0,
     ):
 
         # storing imported parameters
@@ -90,7 +91,7 @@ class DataGenerator(keras.utils.Sequence):
         )
 
     def generate(self):
-        """             
+        """
         call for yield generator:
         generator_name.generate() INSTEAD of generator_name
         """
@@ -103,7 +104,7 @@ class DataGenerator(keras.utils.Sequence):
 
     def on_epoch_end(self):
         "Updates indexes after each epoch"
-        if self.shuffle == True:
+        if self.shuffle:
             np.random.shuffle(self.allData)
 
     def get_patch(self, imgLocation):
@@ -118,9 +119,12 @@ class DataGenerator(keras.utils.Sequence):
 
         if self.random_rotation:
             img = random_rotation(img)
-        
-        if self.normalize_data:
+
+        if self.normalize_data == 1:
             X[0] = img / np.max(img)
+        elif self.normalize_data == 2:
+            # https://github.com/pytorch/examples/blob/97304e232807082c2e7b54c597615dc0ad8f6173/imagenet/main.py#L197-L198
+            X[0] = (img / 255 - [0.485, 0.456, 0.406]) - [0.229, 0.224, 0.225]
         else:
             X[0] = img / 255
         return X
@@ -137,4 +141,3 @@ class DataGenerator(keras.utils.Sequence):
             y[b] = keras.utils.to_categorical(randomLabel, self.n_labels)
 
         return X, y
-
